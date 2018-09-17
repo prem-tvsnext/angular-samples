@@ -1,0 +1,71 @@
+<section class="elevated-border si-grid scroll-auto" style="overflow-x: auto;">
+  <div *ngIf="gridColumnView && gridColumnView.length" [ngStyle]="{'width':tableHolderWidth}">
+    <header #tableHeader fxLayout="row" fxLayout.lt-sm="column" class="align-center grid-header">
+      <div *ngFor="let header of gridColumnView;let indx=index" [style.width.%]="setHeaderColumnWidth(header.columnWidth)" class="label flex  cursor-pointer pos-relative">
+        <span *ngIf="checkAllBox && indx === 0" class="flex align-center margin-auto">
+          <mat-checkbox class=" " [disableRipple]="true" (change)="selectAll($event.checked, header)"></mat-checkbox>
+        </span>
+        <span (click)='!(checkAllBox && indx === 0) ? setSorting(header.valueAs) : true;' class="flex align-center" *ngIf="!header.showHeader"
+          [class.margin-auto]="header.centerAlign">{{header.displayName | translate}}
+          <i class="material-icons unset-width">
+            {{arrow[header.valueAs]}}
+          </i>
+        </span>
+      </div>
+      <div class="label flex  cursor-pointer pos-relative" fxFlex="1.5">
+      </div>
+    </header>
+    <section #wrapper class="scroll-y" [ngStyle]="setHeight()" (scroll)="onScrollEvent($event)"
+      totalItems="10">
+      <div fxLayout="row" *ngIf="gridEnableEdit && !openEditBottom" class="content si-grid-row row-spacing si-grid-row-active cursor-pointer">
+        <div *ngFor="let header of gridColumnView;" [style.width.%]="header.columnWidth" class="pos-relative flex"
+          [formGroup]="dynamicInputForm">
+          <span *ngIf="header.type ==='icon'" [class.margin-auto]="header.centerAlign" class="relative" >
+            <lib-dice-menu  [diceMenuLocked]="viewMode" [menuList]="['Delete']" (diceMenuClick)="enableEdit=false;clearInput();deleteAction();"></lib-dice-menu>
+          </span>
+          <lib-dynamic-input [inputType]="isElement(header)" *ngIf="header.type !=='icon' && !header.noEdit" [class.checkbox-margin]="header.type === 'checkbox'"
+            [dynamicFormGroup]="dynamicInputForm" [dformControlName]="header.valueAs" class="wt-95" [selectedValue]="intializeDataInput[header.valueAs]"
+            (selectedValueChange)="checkEditChange($event, header.valueAs)" [dropDownItems]="header?.dropDownList" [maxDate]="header?.maxDate"
+            [minDate]="header?.minDate" [value]="'codeCode'" [display]="'screenName'" [disabled]="header?.disabled"></lib-dynamic-input>
+        </div>
+      </div>
+      <div fxLayout="row" *ngFor="let element of gridArrayView;let indx=index" [class.highlight]="setHighlight(indx)"
+        [class.si-grid-row-active]="element.activeRow && gridEnableEdit === false" (click)="rowClickActivity(element,indx)" class="content si-grid-row row-spacing"
+        [class.hide]="element.hidden" [class.cursor-pointer]="rowClick">
+        <div [ngSwitch]="isElement(header)" *ngFor="let header of gridColumnView;" [style.width.%]="header.columnWidth" class="flex align-center custom grid-spacing pos-relative"
+          [hidden]="isVisible(header,element)" (click)="activateClick($event, header);" [class.cursor-pointer]="header.activateClickEvent"   libBindToolTip [tooltip] = "element[header.valueAs]" >
+          <span *ngSwitchCase="'text'" class="cell-format" [class.margin-auto]="header.centerAlign" [class.orange-link]="handleUrlCheck(header)"
+            matTooltip="Click Here" [matTooltipDisabled]="!handleUrlCheck(header)" (click)="handleUrlClick(header);">{{element[header.valueAs]}}</span>
+          <span *ngSwitchCase="'select'" class="cell-format" [class.margin-auto]="header.centerAlign" [class.orange-link]="handleUrlCheck(header)"
+            matTooltip="Click Here" [matTooltipDisabled]="!handleUrlCheck(header)" (click)="handleUrlClick(header);">{{element[header.valueAs]}}</span>
+          <span *ngSwitchCase="'date'" class="cell-format" [class.margin-auto]="header.centerAlign" [class.orange-link]="handleUrlCheck(header)"
+            matTooltip="Click Here" [matTooltipDisabled]="!handleUrlCheck(header)" (click)="handleUrlClick(header);">{{element[header.valueAs]}}</span>
+          <span *ngSwitchCase="'phn'" class="cell-format" [class.margin-auto]="header.centerAlign" [class.orange-link]="handleUrlCheck(header)"
+            matTooltip="Click Here" [matTooltipDisabled]="!handleUrlCheck(header)" (click)="handleUrlClick(header);">{{element[header.valueAs]|phone}}</span>
+          <span *ngSwitchCase="'decimal'" class="cell-format" [class.margin-auto]="header.centerAlign" class="right" [class.orange-link]="handleUrlCheck(header)"
+            matTooltip="Click Here" [matTooltipDisabled]="!handleUrlCheck(header)" (click)="handleUrlClick(header);">{{element[header.valueAs]?.toFixed(2)}} </span>
+          <span *ngSwitchCase="'checkbox'" [class.margin-auto]="header.centerAlign">
+            <mat-checkbox class=" " [disableRipple]="true" [checked]="element[header.valueAs] === header.trueValue" (change)="element[header.valueAs] = $event.checked ? header.trueValue : header.falseValue;  this.selectionEvent.emit(element);" [disabled]="viewMode"></mat-checkbox>
+          </span>
+          <span *ngSwitchCase="'icon'" [class.margin-auto]="header.centerAlign" class="relative dice-menu-settings">
+            <lib-dice-menu  [diceMenuLocked]="viewMode" [menuList]="getMenuList(header, element)" (diceMenuClick)="menuClick($event, element);"></lib-dice-menu>
+          </span>
+        </div>
+      </div>
+      <div>
+      </div>
+      <div fxLayout="row" *ngIf="gridEnableEdit && openEditBottom" class="content si-grid-row row-spacing si-grid-row-active cursor-pointer">
+        <div *ngFor="let header of gridColumnView;" [style.width.%]="header.columnWidth" class="pos-relative flex "
+          [formGroup]="dynamicInputForm">
+          <span *ngIf="header.type ==='icon'" [class.margin-auto]="header.centerAlign" class="relative">
+            <lib-dice-menu  [diceMenuLocked]="viewMode" [menuList]="['Delete']" (diceMenuClick)="enableEdit=false;clearInput();;deleteAction();"></lib-dice-menu>
+          </span>
+          <lib-dynamic-input [inputType]="isElement(header)" *ngIf="header.type !=='icon' && !header.noEdit" [class.checkbox-margin]="header.type === 'checkbox'"
+            [dynamicFormGroup]="dynamicInputForm" [dformControlName]="header.valueAs" class="wt-95" [selectedValue]="intializeDataInput[header.valueAs]"
+            (selectedValueChange)="checkEditChange($event, header.valueAs)" [dropDownItems]="header?.dropDownList" [maxDate]="header?.maxDate"
+            [minDate]="header?.minDate" [value]="'codeCode'" [display]="'screenName'" [disabled]="header?.disabled"></lib-dynamic-input>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>

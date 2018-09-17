@@ -1,0 +1,22 @@
+.example-form {
+  width: 100%;
+}
+
+.example-full-width {
+  width: 100%;
+}
+
+.long-content {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+table {
+  min-width: 100%;
+}
+
+.example-container {
+  height: 400px;
+  overflow: auto;
+}

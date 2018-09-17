@@ -1,0 +1,66 @@
+@import "public/assets/scss/_variables.scss";
+
+.si-grid {
+    .highlight {
+        background: rgb(236, 249, 255);
+    }
+
+    .content {
+        font-size: 14px;
+    }
+
+    .row-spacing {
+        min-height: 30px;
+        padding-top: 5px;
+        padding-bottom: 5px;
+    }
+
+    .si-grid-row {
+      padding-left: 4px;
+    }
+
+    .si-grid-row:hover {
+        background: rgba(0, 0, 0, 0.12);
+    }
+
+    .si-grid-row-active {
+        background: rgba(0, 0, 0, 0.12);
+        color: $black;
+    }
+
+    .checkbox-margin {
+        margin-left: 44%;
+    }
+
+    .cell-format {
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+    }
+
+    .dice-menu-settings {
+        height: 21px;
+        width: 24px;
+        // position: relative;
+        // left: 7px;
+    }
+
+    .label {
+        font-size: 13px;
+        color: $ibm-color;
+    }
+
+    .grid-header {
+        height: 31px;
+        padding-left: 4px;
+    }
+
+    .scroll-y {
+        overflow-y: scroll;
+    }
+
+    .scroll-auto {
+        overflow-x: auto;
+    }
+
+}
